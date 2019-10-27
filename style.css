@@ -3,10 +3,15 @@ body{
     padding: 100px;
 }
 
-.matrixSize{
+.matrixSize, .lineWidth{
     display: block;
     height: 70px;
     width: 100%;
+    margin-top: 20px;
+}
+
+.colorSelector{
+    display: inline-block;
     margin-top: 20px;
 }
 

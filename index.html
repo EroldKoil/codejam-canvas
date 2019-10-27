@@ -8,15 +8,25 @@
 </head>
 <body>
 
-    <canvas id="canvas" class="canvas"> </canvas>
-    <div class="config">
-        <select id="matrixSize" class="matrixSize" size="4" multiple >
-            <option disabled>Matrix size</option>
-            <option selected value="4x4">4x4</option>
-            <option value="32x32">32x32</option>
-            <option value="512x512">512x512</option>
-        </select>
+<canvas id="canvas" class="canvas"> </canvas>
+<div class="config">
+    <select id="matrixSize" class="matrixSize" size="4" multiple >
+        <option disabled>Matrix size</option>
+        <option selected value="4x4">4x4</option>
+        <option value="32x32">32x32</option>
+        <option value="512x512">512x512</option>
+    </select>
+    <select id="lineWidth" class="lineWidth" size="4" multiple >
+        <option disabled>Line width</option>
+        <option selected value="1">1px</option>
+        <option value="2">2px</option>
+        <option value="4">4px</option>
+    </select>
+    <div class="colorSelector" >
+        <input id="colorLeft"  type="color"  value="#000000">
+        <input id="colorRight"  type="color"  value="#ffffff">
     </div>
+</div>
 </body>
 
 </html>
