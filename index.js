@@ -76,4 +76,38 @@ function getJson(fileName) {
     return matrix;
 }
 
+canvas.onmousedown = function (event) {
+    let color = colorLeft;
+
+    if(event.button==2){
+        color = colorRight;
+    }
+    let x = event.offsetX;
+    let y = event.offsetY;
+    context.fillStyle = color;
+    context.fill();
+    context.fillRect(Math.floor(x/(512/coef))*(512/coef), Math.floor(y/(512/coef))*(512/coef), 512/coef, 512/coef);
+
+    canvas.onmousemove = function (event) {
+        let x = event.offsetX;
+        let y = event.offsetY;
+        context.fillStyle = color;
+        context.fill();
+        context.fillRect(Math.floor(x/(512/coef))*(512/coef), Math.floor(y/(512/coef))*(512/coef), 512/coef, 512/coef);
+
+    };
+    canvas.onmouseup = function () {
+        canvas.onmousemove = null;
+        return;
+    };
+};
+
+canvas.onmouseout = function(){
+    canvas.onmousemove = null;
+};
+
+canvas.oncontextmenu = function (event) {
+    event.preventDefault();
+};
+
 
