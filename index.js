@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 const canvasWork = document.getElementById('canvasWork');
 const contextWork = canvasWork.getContext('2d');
+
 canvas.height = '512';
 canvas.width = '512';
 canvasWork.height = '512';
@@ -18,7 +19,7 @@ class Changes{
         changes.push(this);
     }
     drawChange(){
-        context
+
     }
 }
 
@@ -31,13 +32,26 @@ class Painter {
         this.selectedTool = 'pan';
     }
     changeTool(tool){
+        if(this.selectedTool != undefined) {
+            document.getElementById(this.selectedTool).style.border = '4px solid rgb(68, 61, 45)';
+        }
         this.selectedTool = tool;
+        document.getElementById(this.selectedTool).style.border = '4px solid rgb(221, 157, 12)';
+
     }
 }
 
 let painter = new Painter(4, '#000000', '#ffffff', 1);
 
 changeMatrixSize(document.getElementById('matrixSize').value);
+
+let allTools = document.querySelector('.toolsPanel').children;
+for(let i = 0; i < allTools.length ; i++){
+    let el = allTools[i];
+    el.addEventListener('click' , function () {
+        painter.changeTool(el.id);
+   });
+}
 
 
 
@@ -46,6 +60,8 @@ const colorInputLeft = document.getElementById("colorLeft");
 const colorInputRight = document.getElementById("colorRight");
 painter.colorLeft = colorInputLeft.value;
 painter.colorRight = colorInputRight.value;
+
+currentColor(colorLeft);
 
 colorInputLeft.addEventListener("input", function() {
     painter.colorLeft = colorInputLeft.value;
@@ -147,26 +163,55 @@ canvas.onmousedown = function (event) {
     console.log('color=' + color);
     let lineWidth = painter.lineWidth;
 
-
-
     if (event.button == 2) {
         color = painter.colorRight;
     }
+    currentColor(color);
     let x = event.offsetX;
     let y = event.offsetY;
     context.fillStyle = color;
     context.fill();
-
     switch (painter.selectedTool) {
         case 'pan':
+            let prevX = x;
+            let prevY = y;
             context.fillRect(Math.floor(x / (512 / coef)) * (512 / coef), Math.floor(y / (512 / coef)) * (512 / coef), 512 / coef * lineWidth, 512 / coef * lineWidth);
+          /*  alert(color);
+            matrix[x/coef][y/coef] = color;*/
+            canvas.onmousemove = function (event) {
+                let prevX = x;
+                let prevY = y;
+                x = event.offsetX;
+                y = event.offsetY;
+                if(Math.abs(x - prevX) > 512 / coef  || Math.abs(y - prevY) > 512 / coef){
+                    /*console.log('x=' + x + ';px = ' + prevX) ;
+                    console.log('y=' + y + ';py = ' + prevY) ;
+                    drawLine(x, y, prevX, prevY, color, context);*/
+                }
+                else{
+                    context.fillRect(Math.floor(x / (512 / coef)) * (512 / coef), Math.floor(y / (512 / coef)) * (512 / coef), 512 / coef * lineWidth, 512 / coef * lineWidth);
+                }
+
+            };
+            break;
+        case 'pipette':
+            let pipColor = context.getImageData(x, y, 1, 1).data;
+            pipColor = `rgba(${pipColor[0]}, ${pipColor[1]}, ${pipColor[2]}, ${255 / pipColor[3]})`;
             canvas.onmousemove = function (event) {
                 x = event.offsetX;
                 y = event.offsetY;
-                context.fillRect(Math.floor(x / (512 / coef)) * (512 / coef), Math.floor(y / (512 / coef)) * (512 / coef), 512 / coef * lineWidth, 512 / coef * lineWidth);
-            };
+                pipColor = context.getImageData(x, y, 1, 1).data;
+                pipColor = `rgba(${pipColor[0]}, ${pipColor[1]}, ${pipColor[2]}, ${255 / pipColor[3]})`;
+                currentColor(pipColor);
+            }
+            currentColor(pipColor);
             break;
-        case 'line':
+        case 'fill':
+            let r = parseInt(color.slice(1, 3), 16);
+            let g = parseInt(color.slice(3, 5), 16);
+            let b = parseInt(color.slice(5, 7), 16);
+            color = "rgba(" + r + ", " + g + ", " + b + ", " + 1 + ")";
+            fill(x , y , color);
             break;
         default: break;
     }
@@ -180,28 +225,104 @@ canvas.onmousedown = function (event) {
 
 function draw(matrix) {
     if(matrix != undefined){
-        let colorDraw;
-        let getColor;
-
-        if(matrix[0][0].length == 4) {
-            getColor = function (i, j) {
-                return `rgba(${matrix[i][j][0]}, ${matrix[i][j][1]}, ${matrix[i][j][2]}, ${255 / matrix[i][j][3]})`;
-            };
-        }else{
-            getColor = function (i, j) {
-                return `#${matrix[i][j]}`;
-            };
+        let color = function (i, j) {
+            return `rgba(${matrix[i][j][0]}, ${matrix[i][j][1]}, ${matrix[i][j][2]}, ${255 / matrix[i][j][3]})`;
         }
         for (let i = 0; i < matrix.length; i++){
             for (let j = 0; j < matrix[i].length; j++){
                 let x = i * (512 / painter.coef);
                 let y = j * (512 / painter.coef);
-                colorDraw = getColor(i, j);
-                context.fillStyle = colorDraw;
+                context.fillStyle = color(i, j);
                 context.fillRect(x, y, 512 / painter.coef, 512 / painter.coef);
                 context.fill();
             }
         }
     }
 }
+/*
+drawLine(10, 100, 301, 300, '#000000', context);
 
+function drawLine(x, y, prevX, prevY, color, context){
+    let coef = painter.coef;
+    let lineWidth = painter.lineWidth;
+    context.fillStyle = color;
+    context.fill();
+    context.fillRect(Math.floor(x / (512 / coef)) * (512 / coef), Math.floor(y / (512 / coef)) * (512 / coef), 512 / coef * lineWidth, 512 / coef * lineWidth);
+    context.fillRect(Math.floor(prevX / (512 / coef)) * (512 / coef), Math.floor(prevY / (512 / coef)) * (512 / coef), 512 / coef * lineWidth, 512 / coef * lineWidth);
+    let lengthX = x - prevX;
+    let lengthY = y - prevY;
+
+
+    if(Math.abs(lengthX) > Math.abs(lengthY)){
+        console.log('x = ' + x + ' prX=' + prevX );
+        if(x < prevX){
+            let a = x;
+            x = prevX;
+            prevX = a;
+            prevY = y;
+        }
+        console.log('x = ' + x + ' prX=' + prevX );
+        let func = lengthY / lengthX;
+        let startX = (Math.floor(prevX / (512 / coef)) + 1) * (512 / coef);
+        let endX = Math.floor(x / (512 / coef)) * (512 / coef);
+        let startY = prevY + Math.floor(prevX - startX)* func;
+
+        console.log('startX = ' + startX + ' endX=' + endX + ' f=' + func);
+        console.log('startY = ' + startY + ' prevY = ' + prevY);
+        for(let i = startX; i < endX ; i += 512 / coef ){
+            let  dy = Math.floor((startY + (i + 512/coef/2) * func) / (512 / coef)) * (512 / coef);
+            console.log('dx=' + i + ' dy=' + dy);
+            context.fillRect(  i , dy , 512 / coef * lineWidth, 512 / coef * lineWidth);
+        }
+    }
+    else{
+        if(y < prevY) {
+            let a = y;
+            y = prevY;
+            prevY = a;
+            prevX = x;
+        }
+        let func = lengthX / lengthY;
+        let startY = (Math.floor(prevY / (512 / coef)) + 1) * (512 / coef);
+        let endY = Math.floor(y / (512 / coef)) * (512 / coef);
+        let startX = prevX + Math.floor(prevY - startY)* func;
+        for(let i = startY; i < endY ; i += 512 / coef ){
+            let  dx = Math.floor((startX + (i + 512/coef/2) * func) / (512 / coef)) * (512 / coef);
+            context.fillRect(  dx , i , 512 / coef * lineWidth, 512 / coef * lineWidth);
+        }
+    }
+}*/
+
+function currentColor(color) {
+    document.getElementById('currentColor').style.backgroundColor = color;
+}
+
+function  fill(x , y , color){
+    let colorData = context.getImageData(x, y, 1, 1).data;
+
+    context.fillStyle = color;
+    context.fillRect(x, y, 1, 1);
+    context.fill();
+
+    let a = x + 1;
+    let jCD = context.getImageData(a , y, 1, 1).data;
+    if(colorData[0] == jCD[0] && colorData[1] == jCD[1] &&colorData[2] == jCD[2] && colorData[3] == jCD[3]){
+        fill(a, y , color);
+    }
+    a = x - 1;
+    jCD = context.getImageData(a , y, 1, 1).data;
+    if(colorData[0] == jCD[0] && colorData[1] == jCD[1] &&colorData[2] == jCD[2] && colorData[3] == jCD[3]){
+        fill(a, y , color);
+    }
+    a = y + 1;
+    jCD = context.getImageData(x , a, 1, 1).data;
+    if(colorData[0] == jCD[0] && colorData[1] == jCD[1] &&colorData[2] == jCD[2] && colorData[3] == jCD[3]){
+        fill(x, a , color);
+    }
+    a = y - 1;
+    jCD = context.getImageData(x , a, 1, 1).data;
+    if(colorData[0] == jCD[0] && colorData[1] == jCD[1] &&colorData[2] == jCD[2] && colorData[3] == jCD[3]){
+        fill(x, a , color);
+    }
+
+}
