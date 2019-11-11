@@ -240,6 +240,7 @@ function draw(matrix) {
     }
 }
 
+
 function currentColor(color) {
     document.getElementById('currentColor').style.backgroundColor = color;
 }
