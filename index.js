@@ -239,59 +239,6 @@ function draw(matrix) {
         }
     }
 }
-/*
-drawLine(10, 100, 301, 300, '#000000', context);
-
-function drawLine(x, y, prevX, prevY, color, context){
-    let coef = painter.coef;
-    let lineWidth = painter.lineWidth;
-    context.fillStyle = color;
-    context.fill();
-    context.fillRect(Math.floor(x / (512 / coef)) * (512 / coef), Math.floor(y / (512 / coef)) * (512 / coef), 512 / coef * lineWidth, 512 / coef * lineWidth);
-    context.fillRect(Math.floor(prevX / (512 / coef)) * (512 / coef), Math.floor(prevY / (512 / coef)) * (512 / coef), 512 / coef * lineWidth, 512 / coef * lineWidth);
-    let lengthX = x - prevX;
-    let lengthY = y - prevY;
-
-
-    if(Math.abs(lengthX) > Math.abs(lengthY)){
-        console.log('x = ' + x + ' prX=' + prevX );
-        if(x < prevX){
-            let a = x;
-            x = prevX;
-            prevX = a;
-            prevY = y;
-        }
-        console.log('x = ' + x + ' prX=' + prevX );
-        let func = lengthY / lengthX;
-        let startX = (Math.floor(prevX / (512 / coef)) + 1) * (512 / coef);
-        let endX = Math.floor(x / (512 / coef)) * (512 / coef);
-        let startY = prevY + Math.floor(prevX - startX)* func;
-
-        console.log('startX = ' + startX + ' endX=' + endX + ' f=' + func);
-        console.log('startY = ' + startY + ' prevY = ' + prevY);
-        for(let i = startX; i < endX ; i += 512 / coef ){
-            let  dy = Math.floor((startY + (i + 512/coef/2) * func) / (512 / coef)) * (512 / coef);
-            console.log('dx=' + i + ' dy=' + dy);
-            context.fillRect(  i , dy , 512 / coef * lineWidth, 512 / coef * lineWidth);
-        }
-    }
-    else{
-        if(y < prevY) {
-            let a = y;
-            y = prevY;
-            prevY = a;
-            prevX = x;
-        }
-        let func = lengthX / lengthY;
-        let startY = (Math.floor(prevY / (512 / coef)) + 1) * (512 / coef);
-        let endY = Math.floor(y / (512 / coef)) * (512 / coef);
-        let startX = prevX + Math.floor(prevY - startY)* func;
-        for(let i = startY; i < endY ; i += 512 / coef ){
-            let  dx = Math.floor((startX + (i + 512/coef/2) * func) / (512 / coef)) * (512 / coef);
-            context.fillRect(  dx , i , 512 / coef * lineWidth, 512 / coef * lineWidth);
-        }
-    }
-}*/
 
 function currentColor(color) {
     document.getElementById('currentColor').style.backgroundColor = color;
