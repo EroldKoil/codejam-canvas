@@ -29,7 +29,7 @@ class Painter {
         this.colorLeft = colorLeft;
         this.colorRight = colorRight;
         this.lineWidth = lineWidth;
-        this.selectedTool = 'pan';
+        this.changeTool('pan');
     }
     changeTool(tool){
         if(this.selectedTool != undefined) {
@@ -326,3 +326,16 @@ function  fill(x , y , color){
     }
 
 }
+
+document.addEventListener('keydown' , function (event){
+    event.preventDefault();
+    if(event.code == 'KeyB'){
+        painter.changeTool('fill');
+    }
+    else  if(event.code == 'KeyP'){
+        painter.changeTool('pan');
+    }
+    else  if(event.code == 'KeyC'){
+        painter.changeTool('pipette');
+    }
+});
